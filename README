@@ -1,0 +1,54 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1021
+
+The idea of this plugin (collection) is to allow you to easily setup and manage ex commands that happen when you (in insert mode) type a keyword (of your choice) and pretty a special char(easily configurable). For instance:
+fts`
+fts is the keyword (Feral Time Stamp)
+'`' is the special char that is used to invoke the main script.
+
+This will result in:
+[Feral:176/04@06:50]
+I.e. results in replacing fts with the string '[Feral:176/04@06:50]'
+
+You can add your own keywords via script functions and each keyword is dependant on a given file type.
+
+So to define a global 'if' keyword you would do something like:
+call FeralStub_AddNewExecute('', '\<i\%[f]\>', "norm! ciwif\<CR>endif\<ESC>kA \<ESC>")
+
+An to define a 'if' keyword only for say .vim files:
+call FeralStub_AddNewExecute('vim', '\<i\%[f]\>', "norm! ciwif\<CR>endif\<ESC>kA \<ESC>")
+
+Or to define an 'if' keyword for the current file type:
+call FeralStub_AddNewExecute(&ft, '\<i\%[f]\>', "norm! ciwif\<CR>endif\<ESC>kA \<ESC>")
+
+See the documentation in feralstub.vim for more specifics.
+
+In brief:
+call FeralStub_AddNewExecute(<filetype>, <match_pattern>, <ex_command_to_execute_when_keyword_matches_match_pattern>)
+Or
+call FeralStub_AddNewFunction(<filetype>, <match_pattern>, <Global_Function_To_call_when_keyword_mattches_match_pattern>)
+
+
+The end result is an easy way to add a new entry into this stub system, and to easily allow such entries to be added from various locations such as plugin, ftplugin or a script that is sourced on a per project basis (via autocommands for instance).
+
+The match_pattern is fed directly to match() so what you can match is very flexable
+The ex_command_to_execute_when_keyword_matches_match_pattern is fed directly to :execute
+The Global_Function_To_call_when_keyword_mattches_match_pattern is fed directly to :call
+
+
+The only downside I can foresee with this is:
+1. exit and restart vim to get a new pattern into the system.
+2. the 'ex' pattern is a pain but generally just i_CTRL-R_CTRL-R a recorded macro and the hard part is done.
+3. This makes extensive use of curly-braces-names and lots of vars.
+
+
+
+
+You can easily change the default '`. special char to something else via two lines in your .vimrc (or the like)
+Examples: (in .vimrc)
+To Specify A Different Typable Char:
+imap	<unique>	~	<Plug>FeralStub_DO
+let g:FeralStub_CharToInsertOnFailure = '~'
+
+To Specify A Non Typable Char:
+imap	<unique>	<F12>	<Plug>FeralStub_DO
+let g:FeralStub_CharToInsertOnFailure = ''
